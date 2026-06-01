@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-cream: #faf6f0;
+  --color-mist-pink: #f2e4da;
+  --color-mist-pink-rgb: 242, 228, 218;
+  --color-warm-brown: #d9b299;
+  --color-warm-brown-rgb: 217, 178, 153;
+  --color-deep-brown: #947453;
+  --color-gold: #e5c872;
+  --color-dark-gold: #d3a76d;
+  --color-coral: #ed726e;
+  --color-text-primary: #69562c;
+  --color-text-primary-rgb: 105, 86, 44;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-text-primary);
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .float-panel {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(var(--color-warm-brown-rgb), 0.2);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(var(--color-text-primary-rgb), 0.06);
+  }
+
+  .capsule-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 12px;
+    border-radius: 9999px;
+    font-size: 12px;
+    background: rgba(var(--color-mist-pink-rgb), 0.5);
+    color: var(--color-text-primary);
+  }
+}
