@@ -2,12 +2,52 @@
 
 export type GardenType = 'travel' | 'food' | 'shopping' | 'life' | 'aesthetic';
 export type ClassifyResult = GardenType | 'uncategorized';  // AI 分类可能无法归入现有 5 个
-export type SourceType = 'image' | 'link' | 'text';
+export type SourceType = 'image' | 'link' | 'text' | 'wechat';
 export type PlantStage = 'seed' | 'sprout' | 'growing' | 'bloom' | 'fruit';
 export type Emotion = 'joy' | 'sad' | 'calm' | 'anxious' | 'excited' | 'neutral';
 export type AiActivity = 'passive' | 'semi' | 'active';
 export type PlantFamily = 'tree' | 'flower' | 'fruitTree' | 'herb' | 'vine';
 export type HarvestOutputType = 'itinerary' | 'comparison' | 'checklist' | 'moodboard';
+
+export interface HarvestItem {
+  title: string;
+  summary: string;
+  reason: string;
+  tags: string[];
+  sourceSeedIds: string[];
+  hasUncertainInfo: boolean;
+  uncertainNote?: string;
+}
+
+export interface HarvestSection {
+  name: string;
+  sourceCount: number;
+  items: HarvestItem[];
+}
+
+export interface Harvest {
+  id: string;
+  user_id: string;
+  topic_id: string;
+  version: number;
+  output_type: HarvestOutputType;
+  title: string;
+  subtitle: string;
+  base_info: Record<string, string>;
+  sections: HarvestSection[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface HarvestPreview {
+  title: string;
+  subtitle: string;
+  outputType: HarvestOutputType;
+  baseInfo: Record<string, string>;
+  sections: HarvestSection[];
+  /** API 层保证准确的种子数（非 AI 估算） */
+  seedCount: number;
+}
 
 export interface Profile {
   id: string;
@@ -30,7 +70,10 @@ export interface Topic {
   structure_score: number;
   can_harvest: boolean;
   tags: string[];
+  /** 主题级缺失字段 —— 清单生成所需的关键信息 */
   missing_fields: string[];
+  /** 主题级已填字段 —— 用户主动补充的清单关键信息 */
+  profile_fields?: Record<string, string>;
   color_variant: string;
   fruited_at?: string;
   fruited_note?: string;
@@ -48,6 +91,13 @@ export interface Seed {
   source_url?: string;
   tags: string[];
   created_at: string;
+  image_url?: string;
+  title?: string;
+  summary?: string;
+  extracted_fields?: Record<string, string>;
+  missing_fields?: string[];
+  branch?: string;
+  user_notes?: string;
 }
 
 export interface ChatSession {
@@ -147,3 +197,68 @@ export interface TopicCard {
 }
 
 export type IntentType = 'collect' | 'question' | 'supplement' | 'chat';
+
+export interface GrowthNarrative {
+  previousGrowthScore: number;
+  currentGrowthScore: number;
+  contributionScore: number;
+  addedBranch?: string;
+  addedTags: string[];
+  stageBefore: PlantStage;
+  stageAfter: PlantStage;
+  narrativeText: string;
+}
+
+export interface PlantPlacement {
+  gardenId: string;
+  gardenName: string;
+  topicId: string;
+  topicName: string;
+  plantFamily: PlantFamily;
+  stage: PlantStage;
+}
+
+export interface SeedAnalysisResult {
+  aiTitle: string;
+  aiSummary: string;
+  tags: string[];
+  extractedFields: Record<string, string>;
+  missingFields: string[];
+  branch?: string;
+}
+
+export interface GrowthContribution {
+  previousGrowthScore: number;
+  currentGrowthScore: number;
+  contributionScore: number;
+  addedBranch?: string;
+  addedTags: string[];
+  stageBefore: PlantStage;
+  stageAfter: PlantStage;
+}
+
+export interface BranchInfo {
+  name: string;
+  count: number;
+  icon?: string;
+  isCustom?: boolean;
+}
+
+// 植物卡片聚合数据（API 返回）
+export interface TopicCardData {
+  topicId: string;
+  topicName: string;
+  plantFamily: PlantFamily;
+  stage: PlantStage;
+  growthScore: number;
+  seedCount: number;
+  tags: string[];
+  latestSeedTitle: string | null;
+  hasHarvest: boolean;
+  updatedAt: string;
+}
+
+export interface GardenCardsResponse {
+  gardenType: GardenType;
+  topics: TopicCardData[];
+}
