@@ -10,13 +10,22 @@ interface ModalProps {
   onClose: () => void;
   title?: string;
   children: React.ReactNode;
+  /** 弹窗宽度：sm=384px, md=448px, lg=512px, xl=768px */
+  size?: 'sm' | 'md' | 'lg' | 'xl';
 }
+
+const SIZE_CLASS: Record<string, string> = {
+  sm: 'max-w-sm',
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+  xl: 'max-w-3xl',
+};
 
 /** 查询 firstFocusable 的 CSS 选择器：所有可交互元素 */
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-export function Modal({ open, onClose, title, children }: ModalProps) {
+export function Modal({ open, onClose, title, children, size = 'lg' }: ModalProps) {
   const titleId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
@@ -65,8 +74,10 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
       });
       return () => cancelAnimationFrame(raf);
     } else {
-      // 关闭时归还焦点
-      previousFocusRef.current?.focus();
+      // 关闭时归还焦点（需确认元素仍在 DOM 中，避免聚焦已卸载的元素）
+      if (previousFocusRef.current && document.contains(previousFocusRef.current)) {
+        previousFocusRef.current.focus();
+      }
       previousFocusRef.current = null;
     }
   }, [open]);
@@ -107,7 +118,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 20 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="relative w-full max-w-lg mx-4 p-6 rounded-2xl bg-white/90 backdrop-blur-md shadow-lg"
+            className={`relative w-full ${SIZE_CLASS[size]} mx-4 p-6 rounded-2xl bg-white/90 backdrop-blur-md shadow-lg`}
           >
             {title && (
               <h2

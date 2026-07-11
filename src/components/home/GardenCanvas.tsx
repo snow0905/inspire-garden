@@ -4,9 +4,10 @@ import { FlowerbedOverlay } from './FlowerbedOverlay';
 
 interface GardenCanvasProps {
   gardens: GardenOverview[];
+  basePath?: string;
 }
 
-export function GardenCanvas({ gardens }: GardenCanvasProps) {
+export function GardenCanvas({ gardens, basePath }: GardenCanvasProps) {
   return (
     <div className="absolute inset-0 flex items-center justify-center">
       {/* Layer 2: 花园背景 PNG (来自 inspire-garden/image/首页背景.png) */}
@@ -19,7 +20,7 @@ export function GardenCanvas({ gardens }: GardenCanvasProps) {
       />
 
       {/* Layer 4: 花圃浮签叠加层 */}
-      <FlowerbedOverlay gardens={gardens} />
+      <FlowerbedOverlay gardens={gardens} basePath={basePath} />
 
       {/* Layer 5: Canvas 粒子层（预留） */}
       <canvas

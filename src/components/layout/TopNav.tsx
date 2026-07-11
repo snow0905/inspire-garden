@@ -3,33 +3,22 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
 import { COLORS } from '@/lib/constants';
-
-interface NavItem {
-  label: string;
-  href?: string;
-  action?: 'search' | 'placeholder';
-}
-
-const NAV_ITEMS: NavItem[] = [
-  { label: '问问花园', action: 'search' },
-  { label: '全部灵感', href: '/' },
-  { label: '待补水', action: 'placeholder' },
-  { label: '花园回顾', action: 'placeholder' },
-];
+import { useBreadcrumb } from '@/hooks/useBreadcrumb';
 
 interface TopNavProps {
   onFeedClick?: () => void;
+  demo?: boolean;
 }
 
-export function TopNav({ onFeedClick }: TopNavProps) {
-  const pathname = usePathname();
+export function TopNav({ onFeedClick, demo = false }: TopNavProps) {
   const router = useRouter();
   const supabase = createClient();
   const [hoveredLabel, setHoveredLabel] = useState<string | null>(null);
+  const breadcrumbs = useBreadcrumb();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -38,116 +27,109 @@ export function TopNav({ onFeedClick }: TopNavProps) {
   };
 
   return (
-    <nav className="sticky top-0 z-50 px-6 py-3 flex items-center justify-between"
-      style={{ background: `${COLORS.cream}99`, backdropFilter: 'blur(12px)' }}>
-      {/* Logo */}
-      <Link href="/" className="flex items-center gap-2 text-lg font-semibold" style={{ color: COLORS.textPrimary }}>
-        <span className="text-2xl">🪷</span>
-        <span>灵感花园</span>
-      </Link>
+    <nav
+      className="sticky top-0 z-50 px-6 py-3 flex items-center justify-between"
+      style={{
+        background: 'rgba(255, 248, 239, 0.35)',
+        backdropFilter: 'blur(6px)',
+        WebkitBackdropFilter: 'blur(6px)',
+      }}
+    >
+      {/* 左侧：Logo + 面包屑 */}
+      <div className="flex items-center gap-1 text-sm">
+        <Link
+          href="/"
+          className="flex items-center gap-1.5 font-semibold transition-opacity hover:opacity-75"
+          style={{ color: COLORS.textPrimary }}
+        >
+          <span className="text-lg leading-none">🪷</span>
+          <span>灵感花园</span>
+        </Link>
 
-      {/* 中间导航 */}
-      <div className="flex items-center gap-1">
-        {NAV_ITEMS.map((item) => {
-          // 搜索按钮：滚动到首页搜索框并聚焦
-          if (item.action === 'search') {
-            const focusSearch = () => {
-              const input = document.querySelector<HTMLInputElement>(
-                'input[placeholder*="问问你的花园"]'
+        {breadcrumbs.length > 0 && (
+          <>
+            {breadcrumbs.map((item, i) => {
+              const isLast = i === breadcrumbs.length - 1;
+              return (
+                <span key={i} className="flex items-center gap-1">
+                  <span style={{ color: COLORS.warmBrown, opacity: 0.5 }} className="text-xs">
+                    /
+                  </span>
+                  {item.href && !isLast ? (
+                    <Link
+                      href={item.href}
+                      className="transition-opacity hover:opacity-70"
+                      style={{ color: COLORS.deepBrown, opacity: 0.85 }}
+                    >
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <span style={{ color: COLORS.textPrimary, opacity: 0.9 }}>
+                      {item.label}
+                    </span>
+                  )}
+                </span>
               );
-              if (input) {
-                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                input.focus();
-              }
-            };
-            return (
-              <button
-                key={item.label}
-                type="button"
-                onClick={() => {
-                  if (pathname !== '/') {
-                    router.push('/');
-                    setTimeout(focusSearch, 400);
-                  } else {
-                    focusSearch();
-                  }
-                }}
-                className="relative px-4 py-2 text-sm transition-colors"
-                style={{ color: hoveredLabel === item.label ? COLORS.deepBrown : COLORS.textPrimary }}
-                onMouseEnter={() => setHoveredLabel(item.label)}
-                onMouseLeave={() => setHoveredLabel(null)}
-              >
-                <span className="relative z-10">{item.label}</span>
-              </button>
-            );
-          }
-
-          // 占位按钮：MVP 阶段暂无独立页面
-          if (item.action === 'placeholder') {
-            return (
-              <button
-                key={item.label}
-                type="button"
-                className="relative px-4 py-2 text-sm transition-colors cursor-default"
-                style={{ color: `${COLORS.textPrimary}66` }}
-                title="即将上线"
-                aria-disabled="true"
-              >
-                <span className="relative z-10">{item.label}</span>
-              </button>
-            );
-          }
-
-          // 正常路由链接
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href!}
-              className="relative px-4 py-2 text-sm transition-colors"
-              style={{ color: hoveredLabel === item.label ? COLORS.deepBrown : COLORS.textPrimary }}
-              onMouseEnter={() => setHoveredLabel(item.label)}
-              onMouseLeave={() => setHoveredLabel(null)}
-            >
-              {item.label}
-              {isActive && (
-                <motion.div
-                  layoutId="nav-active"
-                  className="absolute inset-0 rounded-full"
-                  style={{ background: `${COLORS.mistPink}99` }}
-                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                />
-              )}
-              <span className="relative z-10">{item.label}</span>
-            </Link>
-          );
-        })}
+            })}
+          </>
+        )}
       </div>
 
       {/* 右侧 */}
       <div className="flex items-center gap-3">
+        {demo && (
+          <span
+            className="px-3 py-1 text-xs font-medium rounded-full"
+            style={{
+              background: 'rgba(181, 201, 182, 0.25)',
+              color: '#5a7a5c',
+              border: '1px solid rgba(181, 201, 182, 0.4)',
+            }}
+          >
+            🌿 Demo 体验
+          </span>
+        )}
         <motion.button
           whileHover={{ scale: 1.02, boxShadow: `0 0 20px ${COLORS.coral}4D` }}
-          onClick={onFeedClick}
+          onClick={() => {
+            if (demo) {
+              alert('当前为 Demo 体验模式，登录后可投喂灵感到你的专属花园。');
+              return;
+            }
+            onFeedClick?.();
+          }}
           className="px-5 py-2 text-sm font-medium text-white rounded-full transition-all"
           style={{ background: `linear-gradient(135deg, ${COLORS.mistPink} 0%, ${COLORS.coral} 100%)` }}
         >
           + 投喂新灵感
         </motion.button>
-        <button
-          onClick={handleLogout}
-          className="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors"
-          style={{
-            backgroundColor: hoveredLabel === 'logout'
-              ? `${COLORS.warmBrown}80`
-              : `${COLORS.warmBrown}4D`,
-            color: COLORS.textPrimary,
-          }}
-          onMouseEnter={() => setHoveredLabel('logout')}
-          onMouseLeave={() => setHoveredLabel(null)}
-        >
-          👤
-        </button>
+        {demo ? (
+          <a
+            href="/auth"
+            className="px-4 py-2 text-sm font-medium rounded-full transition-all hover:opacity-80"
+            style={{
+              background: `linear-gradient(135deg, ${COLORS.mistPink} 0%, ${COLORS.coral} 100%)`,
+              color: 'white',
+            }}
+          >
+            免费注册
+          </a>
+        ) : (
+          <button
+            onClick={handleLogout}
+            className="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors"
+            style={{
+              backgroundColor: hoveredLabel === 'logout'
+                ? `${COLORS.warmBrown}80`
+                : `${COLORS.warmBrown}4D`,
+              color: COLORS.textPrimary,
+            }}
+            onMouseEnter={() => setHoveredLabel('logout')}
+            onMouseLeave={() => setHoveredLabel(null)}
+          >
+            👤
+          </button>
+        )}
       </div>
     </nav>
   );

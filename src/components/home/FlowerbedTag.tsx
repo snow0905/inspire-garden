@@ -9,16 +9,18 @@ import { COLORS } from '@/lib/constants';
 interface FlowerbedTagProps {
   garden: GardenOverview;
   style?: React.CSSProperties;
+  /** 导航链接前缀，默认 '/garden'，demo 模式传 '/demo/inspiration-garden' */
+  basePath?: string;
 }
 
-export function FlowerbedTag({ garden, style }: FlowerbedTagProps) {
+export function FlowerbedTag({ garden, style, basePath = '/garden' }: FlowerbedTagProps) {
   return (
     <motion.div
       whileHover={{ y: -4, boxShadow: `0 0 24px ${COLORS.gold}40` }}
       style={style}
     >
       <Link
-        href={`/garden/${garden.gardenId}`}
+        href={`${basePath}/${garden.gardenId}`}
         className="block px-4 py-3 float-panel cursor-pointer transition-colors hover:bg-white/80"
       >
         <div className="flex items-center gap-2 mb-1">

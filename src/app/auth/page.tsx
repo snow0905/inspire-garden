@@ -29,11 +29,21 @@ export default function AuthPage() {
         router.refresh();
       }
     } else {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) {
         setError(error.message);
+      } else if (data.user) {
+        // MVP: 自动确认邮箱，跳过邮件验证
+        await fetch('/api/auth/auto-confirm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: data.user.id }),
+        });
+        setIsLogin(true);
+        setPassword('');
+        setError('注册成功！请登录。');
       } else {
-        setError('注册成功！请检查邮箱确认链接（或已直接登录）。');
+        setError('注册失败，请稍后再试。');
       }
     }
     setLoading(false);

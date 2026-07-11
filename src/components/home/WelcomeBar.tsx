@@ -14,13 +14,7 @@ export function WelcomeBar({ title, keywords }: WelcomeBarProps) {
       animate={{ opacity: 1, x: 0 }}
       className="absolute top-4 left-6 z-10"
     >
-      <h2 className="text-lg font-medium mb-2" style={{ color: COLORS.textPrimary }}>{title}</h2>
-      <div className="flex items-center gap-1.5 flex-wrap">
-        <span className="text-sm" style={{ color: COLORS.deepBrown }}>我发现你最近经常种下：</span>
-        {keywords.map((kw) => (
-          <span key={kw} className="capsule-tag">{kw}</span>
-        ))}
-      </div>
+      <h2 className="text-lg font-medium" style={{ color: COLORS.textPrimary }}>{title}</h2>
     </motion.div>
   );
 }

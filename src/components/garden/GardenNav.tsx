@@ -5,21 +5,21 @@ import Link from 'next/link';
 import { GARDEN_CONFIG, COLORS } from '@/lib/constants';
 import type { GardenType } from '@/types';
 
-const GARDENS = (Object.entries(GARDEN_CONFIG) as [GardenType, (typeof GARDEN_CONFIG)[GardenType]][]).map(
-  ([id, config]) => ({
-    id,
-    name: config.name,
-    icon: config.icon,
-    route: `/garden/${id}`,
-  }),
-);
-
 interface GardenNavProps {
   currentGarden: GardenType;
+  basePath?: string;
 }
 
 /** 一级花圃横向胶囊切换栏（不含面包屑，面包屑已移至 TopNav） */
-export function GardenNav({ currentGarden }: GardenNavProps) {
+export function GardenNav({ currentGarden, basePath = '/garden' }: GardenNavProps) {
+  const GARDENS = (Object.entries(GARDEN_CONFIG) as [GardenType, (typeof GARDEN_CONFIG)[GardenType]][]).map(
+    ([id, config]) => ({
+      id,
+      name: config.name,
+      icon: config.icon,
+      route: `${basePath}/${id}`,
+    }),
+  );
   return (
     <div className="flex items-center gap-2.5 overflow-x-auto pb-1" role="tablist" aria-label="花园切换">
       {GARDENS.map((garden) => {

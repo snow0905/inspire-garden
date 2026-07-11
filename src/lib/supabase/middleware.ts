@@ -30,15 +30,20 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
   const isAuthPage = pathname.startsWith('/auth');
+  const isDemoPath = pathname.startsWith('/demo');
   const isApiRoute = pathname.startsWith('/api/');
 
-  // 未登录用户访问 API 路由时返回 401 JSON，而非 302 重定向
-  if (!user && isApiRoute) {
+  // MVP: 无需认证即可访问的 API 路由白名单
+  const publicApis = ['/api/auth/auto-confirm'];
+  const isPublicApi = publicApis.includes(pathname);
+
+  // 未登录用户访问 API 路由时返回 401 JSON，而非 302 重定向（公开路由除外）
+  if (!user && isApiRoute && !isPublicApi) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // 未登录用户只能访问 /auth
-  if (!user && !isAuthPage) {
+  // 未登录用户只能访问 /auth、/demo 或公开 API 路由
+  if (!user && !isAuthPage && !isPublicApi && !isDemoPath) {
     return NextResponse.redirect(new URL('/auth', request.url));
   }
 

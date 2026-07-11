@@ -26,7 +26,7 @@ export function SearchBox() {
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.1 }}
-        className="absolute top-28 left-6 z-10 flex items-center gap-2"
+        className="absolute top-16 left-6 z-10 flex items-center gap-2"
       >
         <input
           type="text"
@@ -44,7 +44,7 @@ export function SearchBox() {
           whileHover={{ scale: 1.05 }}
           onClick={handleSearch}
           className="px-5 py-3 text-sm font-medium text-white rounded-full"
-          style={{ background: `linear-gradient(135deg, ${COLORS.gold}, ${COLORS.darkGold})` }}
+          style={{ background: `linear-gradient(135deg, ${COLORS.mistPink} 0%, ${COLORS.coral} 100%)` }}
         >
           开始提问 ✦
         </motion.button>

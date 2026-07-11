@@ -10,13 +10,14 @@ import { PlantAvatar } from './PlantAvatar';
 interface PlantCardProps {
   data: TopicCardData;
   gardenId: string;
+  basePath?: string;
 }
 
-export function PlantCard({ data, gardenId }: PlantCardProps) {
+export function PlantCard({ data, gardenId, basePath = '/garden' }: PlantCardProps) {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/garden/${gardenId}/${data.topicId}`);
+    router.push(`${basePath}/${gardenId}/${data.topicId}`);
   };
 
   return (

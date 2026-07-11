@@ -12,6 +12,7 @@
   --color-gold: #e5c872;
   --color-dark-gold: #d3a76d;
   --color-coral: #ed726e;
+  --color-coral-rgb: 237, 114, 110;
   --color-text-primary: #69562c;
   --color-text-primary-rgb: 105, 86, 44;
 }
@@ -19,7 +20,7 @@
 @layer base {
   body {
     background-color: var(--color-cream);
-    color: var(--color-text-primary);
+    color: #5F4B36;
     font-family: system-ui, -apple-system, sans-serif;
   }
 }
@@ -40,6 +41,197 @@
     border-radius: 9999px;
     font-size: 12px;
     background: rgba(var(--color-mist-pink-rgb), 0.5);
-    color: var(--color-text-primary);
+    color: #5F4B36;
+  }
+
+  /* ===== Seed Card ===== */
+  .seed-card {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(var(--color-warm-brown-rgb), 0.15);
+    border-radius: 24px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 16px rgba(var(--color-text-primary-rgb), 0.06);
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+  .seed-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 24px rgba(var(--color-text-primary-rgb), 0.10);
+  }
+
+  /* Seed thumbnail */
+  .seed-thumbnail {
+    aspect-ratio: 4 / 3;
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    background: rgba(var(--color-mist-pink-rgb), 0.3);
+  }
+
+  /* Source type badge on thumbnail */
+  .seed-source-badge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 10px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(4px);
+    color: #5F4B36;
+    border: 1px solid rgba(var(--color-warm-brown-rgb), 0.25);
+  }
+
+  /* Latest badge with pink glow */
+  .seed-latest-badge {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    z-index: 5;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.88);
+    color: var(--color-coral);
+    border: 1px solid rgba(var(--color-coral-rgb), 0.4);
+    box-shadow: 0 0 12px rgba(var(--color-coral-rgb), 0.22);
+  }
+
+  /* Seed action button */
+  .seed-action-btn {
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 11px;
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.4);
+    color: #5F4B36;
+    border: 1px solid rgba(var(--color-warm-brown-rgb), 0.2);
+    cursor: pointer;
+    transition: background 150ms ease;
+  }
+  .seed-action-btn:hover {
+    background: rgba(var(--color-mist-pink-rgb), 0.4);
+  }
+
+  /* ===== Tag capsule color variants ===== */
+  .tag-capsule-pink {
+    background: #f2e4da;
+    color: #7a5a4a;
+    border: 1px solid #e0cdb8;
+  }
+  .tag-capsule-cream {
+    background: #f5efe0;
+    color: #8b7355;
+    border: 1px solid #e8dbc5;
+  }
+  .tag-capsule-sage {
+    background: #dce8d0;
+    color: #5a6b42;
+    border: 1px solid #c5d4b4;
+  }
+  .tag-capsule-gold {
+    background: #f0e6c8;
+    color: #8b7528;
+    border: 1px solid #e0d4a8;
   }
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== 花园浮层卡片系统 ===== */
+
+/* 浮层卡片 —— 半透明奶油白，毛玻璃效果 */
+.float-card {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(var(--color-warm-brown-rgb), 0.13);
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 2px 20px rgba(var(--color-text-primary-rgb), 0.04);
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+.float-card:hover {
+  box-shadow: 0 4px 28px rgba(var(--color-text-primary-rgb), 0.08);
+}
+
+/* 清单夹板 —— 与浮层卡片统一内边距，柔和悬浮感 */
+.clipboard-panel {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(var(--color-warm-brown-rgb), 0.18);
+  border-radius: 26px;
+  padding: 20px;
+  box-shadow: 0 4px 28px rgba(var(--color-text-primary-rgb), 0.06);
+  position: relative;
+}
+
+/* Popover 便签 —— 绝对定位，不参与布局流 */
+.sticky-note-popover {
+  position: absolute;
+  z-index: 40;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(var(--color-warm-brown-rgb), 0.2);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 8px 32px rgba(var(--color-text-primary-rgb), 0.1);
+  min-width: 220px;
+}
+
+/* 卡片柔和输入框 */
+.garden-input {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(var(--color-warm-brown-rgb), 0.2);
+  color: #5F4B36;
+  outline: none;
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+.garden-input::placeholder {
+  color: rgba(116, 92, 72, 0.36);
+}
+.garden-input:focus {
+  border-color: rgba(var(--color-coral-rgb), 0.35);
+  box-shadow: 0 0 0 3px rgba(var(--color-coral-rgb), 0.08);
+}
+
+/* 胶囊标签 —— 可交互版本 */
+.capsule-tag-interactive {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 14px;
+  border-radius: 9999px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 150ms ease;
+  white-space: nowrap;
+}
+
+/* 柔和装饰动画 */
+@keyframes garden-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes garden-sparkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.4); }
+}
+@keyframes garden-glow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.75; }
+}
+.garden-float-anim { animation: garden-float 3s ease-in-out infinite; }
+.garden-sparkle-anim { animation: garden-sparkle 2s ease-in-out infinite; }
+.garden-glow-anim { animation: garden-glow-pulse 3s ease-in-out infinite; }

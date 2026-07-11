@@ -30,7 +30,28 @@ export async function GET(
       .eq('garden_type', gardenId)
       .order('updated_at', { ascending: false });
 
-    return NextResponse.json({ gardenType: gardenId, topics: topics ?? [] });
+    // 统计每个主题的种子数量
+    const topicIds = (topics ?? []).map((t) => t.id);
+    let seedCounts: Record<string, number> = {};
+    if (topicIds.length > 0) {
+      const { data: counts } = await supabase
+        .from('seeds')
+        .select('topic_id')
+        .in('topic_id', topicIds)
+        .eq('user_id', user.id);
+      seedCounts = (counts ?? []).reduce<Record<string, number>>((acc, s) => {
+        const tid = s.topic_id;
+        if (tid) acc[tid] = (acc[tid] || 0) + 1;
+        return acc;
+      }, {});
+    }
+
+    const topicsWithCount = (topics ?? []).map((t) => ({
+      ...t,
+      seed_count: seedCounts[t.id] || 0,
+    }));
+
+    return NextResponse.json({ gardenType: gardenId, topics: topicsWithCount });
   } catch {
     return NextResponse.json({ error: '服务器内部错误' }, { status: 500 });
   }
